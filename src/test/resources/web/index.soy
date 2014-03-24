@@ -1,0 +1,88 @@
+{namespace core9.widget}
+
+
+/**
+ * @param title
+ * @param js
+ * @param css
+ * @param datafrom
+ * @param path
+ * @param data
+ */
+{template .index}
+<html>
+<head>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<style type="text/css">
+ {foreach $c in $css}
+ 	{$c}
+{ifempty}
+ <!-- no css -->
+{/foreach}
+</style>
+
+<script type="text/javascript">
+ {foreach $j in $js}
+ 	{$j |noAutoescape}
+{ifempty}
+ <!-- no js -->
+{/foreach}
+</script>
+
+</head>
+<body>
+<p>Data is : {$datafrom} with request path : {$path}</p>
+ <h1>
+ Template goes here {$title}
+ </h1>
+ <p>
+ {$js}
+ </p>
+  <p>
+ {$css}
+ </p>
+<p>
+ {foreach $cy in $data.menufooterwidget.countries}
+ 	Country :	{$cy[0]} -> {$cy[1]} </br>
+{ifempty}
+ <!-- no css -->
+{/foreach}
+</br>
+</br>
+</br>
+{$data}
+</p> 
+{call core9.widget.para /}
+
+<ul style="list-style-type: none;">
+
+<li><img id="img" src="http://localhost:8080/images/blaat.jpg?improfile=dummy"></li>
+{for $i in range(50)}
+  <li><img src="http://localhost:8080/images/blaat{$i}.jpg?improfile=dummy"></li>
+{/for}
+
+</ul>
+
+
+<script type="text/javascript">
+	{literal}
+	jQuery( document ).ready(function() {
+		jQuery('img').each(function(){ jQuery(this).attr('src','http://localhost:8080/images/blaat.jpg?improfile=small');});
+
+    });
+    {/literal}
+</script>
+</body>
+</html>
+{/template}
+
+
+/**
+ * 
+ */
+{template .para}
+ <p>
+ para
+ </p>
+ 
+{/template}

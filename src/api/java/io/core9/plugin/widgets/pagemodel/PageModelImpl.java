@@ -3,29 +3,19 @@ package io.core9.plugin.widgets.pagemodel;
 import io.core9.plugin.widgets.Component;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PageModelImpl implements PageModel {
 
 	private String templateName;
 	private String name;
 	private String path;
-	private List<String> roles;
-	private List<Component> components = new ArrayList<Component>();
-	private String requestRole;
+	private Set<String> roles;
+	private List<Component> components = new ArrayList<Component>();;
+	private Set<String> permissions;
 	
-	@Override
-	public PageModelImpl setRequestRole(String requestRole){
-		this.requestRole = requestRole;
-		return this;
-	}
-
-	@Override
-	public String getRequestRole(){
-		return requestRole;
-	}
-
 	@Override
 	public String getName() {
 		return this.name;
@@ -75,85 +65,31 @@ public class PageModelImpl implements PageModel {
 	}
 
 	@Override
-	public PageModelImpl addComponent(Component component) {
-		this.components.add(component);
-		return this;
-	}
-
-	@Override
-	public PageModelImpl addComponents(List<Component> components) {
-		this.components.addAll(components);
-		return this;
-	}
-
-	@Override
-	public List<String> getRoles() {
+	public Set<String> getRoles() {
+		if(roles == null) {
+			roles = new HashSet<String>();
+		}
 		return roles;
 	}
 
 	@Override
-	public PageModelImpl addRoles(List<String> roles) {
-		for (String role : roles) {
-			roles.add(role);
-		}
+	public PageModel setRoles(Set<String> roles) {
+		this.roles = roles;
 		return this;
 	}
 
 	@Override
-	public PageModelImpl removeRole(String role) {
-		Iterator<String> iter = roles.iterator();
-		while (iter.hasNext()) {
-			if (iter.next().equalsIgnoreCase(role)) {
-				iter.remove();
-			}
+	public Set<String> getPermissions() {
+		if(permissions == null) {
+			permissions = new HashSet<String>();
 		}
-		return this;
+		return this.permissions;
 	}
 
 	@Override
-	public PageModelImpl removeRoles(List<String> delRoles) {
-		Iterator<String> iter = roles.iterator();
-		while (iter.hasNext()) {
-			if (delRoles.contains(iter.next().toLowerCase().trim())) {
-				iter.remove();
-			}
-		}
+	public PageModel setPermissions(Set<String> permissions) {
+		this.permissions = permissions;
 		return this;
 	}
-
-	@Override
-	public PageModelImpl addRole(String role) {
-		roles.add(role);
-		return this;
-	}
-
-	/**
-	 * Parse a pagemodel from a config item
-	 * 
-	 * @param config
-	 * @return
-	 */
-	// public static PageModelImpl parsePageModelFromConfig(Map<String, Object>
-	// config) {
-	// PageModelImpl model = new PageModelImpl();
-	// try {
-	// for(Map<String, Object> component : (List<Map<String, Object>>)
-	// config.get("components")) {
-	// model.addComponent(component);
-	// }
-	// } catch (Exception e) {
-	// System.out.println(" component exeption");
-	// }
-	//
-	// model.setPath((String) config.get("path"));
-	// model.setName((String) config.get("name"));
-	// model.setTemplateName((String) config.get("templatename"));
-	// return model;
-	// }
-
-	// private static List<Component> parseComponents(List<Map<String,Object>>
-	// components) {
-	// List<Component> result = new ArrayList<Component>();
-	// }
-
+	
 }

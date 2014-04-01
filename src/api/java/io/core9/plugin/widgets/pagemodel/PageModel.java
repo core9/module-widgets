@@ -3,6 +3,7 @@ package io.core9.plugin.widgets.pagemodel;
 import io.core9.plugin.widgets.Component;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PageModel {
 	
@@ -16,15 +17,12 @@ public interface PageModel {
 	PageModel setPath(String string);
 	
 	List<Component> getComponents();
-	PageModelImpl setComponents(List<Component> components);
+	PageModel setComponents(List<Component> components);
+		
+	Set<String> getRoles();
+	PageModel setRoles(Set<String> roles);
 	
-	PageModel addComponent(Component component);
-	PageModel addComponents(List<Component> components);
-	List<String> getRoles();
-	PageModelImpl addRoles(List<String> roles);
-	PageModelImpl removeRole(String role);
-	PageModelImpl removeRoles(List<String> delRoles);
-	PageModelImpl addRole(String role);
-	PageModelImpl setRequestRole(String requestRole);
-	String getRequestRole();
+	Set<String> getPermissions();
+	PageModel setPermissions(Set<String> permissions);
+
 }

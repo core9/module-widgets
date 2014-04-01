@@ -1,5 +1,6 @@
 package io.core9.plugin.widgets.pagemodel;
 
+import io.core9.module.auth.AuthenticationPlugin;
 import io.core9.plugin.server.HostManager;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.handler.Middleware;
@@ -23,6 +24,9 @@ import org.dozer.DozerBeanMapper;
 
 @PluginImplementation
 public class PageModelFactoryImpl implements PageModelFactory {
+	
+	@InjectPlugin
+	private AuthenticationPlugin authentication;
 	
 	@InjectPlugin
 	private WidgetFactory widgets;
@@ -109,14 +113,61 @@ public class PageModelFactoryImpl implements PageModelFactory {
 		return template;
 	}
 	
-	private static Middleware createMiddleware(final PageModel model, final Map<String,Widget> widgets) throws ComponentDoesNotExists {
-		return new Middleware() {
-			@Override
-			public void handle(Request req) {
-				req.getResponse().setTemplate("io.core9." + model.getTemplateName());
-				req.getResponse().addValue("data", makeDataObject(req, model, widgets));
-			}
-		};
+	/**
+	 * Create a Middleware, depending on the page model roles/permissions
+	 * TODO: Cleanup
+	 * @param model
+	 * @param widgets
+	 * @return
+	 * @throws ComponentDoesNotExists
+	 */
+	private Middleware createMiddleware(final PageModel model, final Map<String,Widget> widgets) throws ComponentDoesNotExists {
+		if(model.getRoles().isEmpty() && model.getPermissions().isEmpty()) {
+			return new Middleware() {
+				@Override
+				public void handle(Request req) {
+					req.getResponse().setTemplate("io.core9." + model.getTemplateName());
+					req.getResponse().addValue("data", makeDataObject(req, model, widgets));
+				}
+			};
+		} else if (model.getPermissions().isEmpty()) {
+			return new Middleware() {
+				@Override
+				public void handle(Request req) {
+					if(authentication.getUser(req).hasRole(model.getRoles())) {
+						req.getResponse().setTemplate("io.core9." + model.getTemplateName());
+						req.getResponse().addValue("data", makeDataObject(req, model, widgets));
+					} else {
+						req.getResponse().setStatusCode(401);
+					}
+				}
+			};
+		} else if (model.getRoles().isEmpty()) {
+			return new Middleware() {
+				@Override
+				public void handle(Request req) {
+					if(authentication.getUser(req).isPermitted(model.getPermissions())) {
+						req.getResponse().setTemplate("io.core9." + model.getTemplateName());
+						req.getResponse().addValue("data", makeDataObject(req, model, widgets));
+					} else {
+						req.getResponse().setStatusCode(401);
+					}
+				}
+			};
+		} else {
+			return new Middleware() {
+				@Override
+				public void handle(Request req) {
+					if(authentication.getUser(req).isPermitted(model.getPermissions()) &&
+							authentication.getUser(req).hasRole(model.getRoles())) {
+						req.getResponse().setTemplate("io.core9." + model.getTemplateName());
+						req.getResponse().addValue("data", makeDataObject(req, model, widgets));
+					} else {
+						req.getResponse().setStatusCode(401);
+					}
+				}
+			};
+		}
 	}
 	
 	private static Map<String, Object> makeDataObject(Request req, PageModel model, Map<String,Widget> widgets) {

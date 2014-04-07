@@ -146,6 +146,15 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	
 	private List<Widget> getDataWidgets(VirtualHost vhost) {
 		List<Widget> widgets = new ArrayList<Widget>();
+//		try {
+//			CrudRepository<WidgetImpl> crud = repository.getRepository(WidgetImpl.class);
+//			Map<String,Object> query = new HashMap<String,Object>();
+//			query.put("configtype", "widget");
+//			widgets = crud.query(vhost, query);
+//			
+//		} catch (NoCollectionNamePresentException e) {
+//			e.printStackTrace();
+//		}
 		for(Map<String,Object> widget : config.getConfigList(vhost, "widget")) {
 			widgets.add(factory.parse(widget));
 		}

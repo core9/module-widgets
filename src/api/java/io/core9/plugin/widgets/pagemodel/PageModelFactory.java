@@ -5,18 +5,16 @@ import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.widgets.exceptions.ComponentDoesNotExists;
 
 import java.util.List;
-import java.util.Map;
 
 public interface PageModelFactory extends Core9Plugin {
-	PageModel parse(Map<String,Object> config);
-	
+
 	PageModelFactory register(VirtualHost vhost, PageModel pageModel);
 
-	PageModelFactory registerAll(VirtualHost virtualHost, List<PageModel> pageModels);
+	PageModelFactory registerAll(VirtualHost virtualHost, List<? extends PageModel> pageModels);
 	
 	PageModelFactory registerOnAll(PageModel pageModels);
 	
-	PageModelFactory registerOnAll(List<PageModel> pageModels);
+	PageModelFactory registerOnAll(List<? extends PageModel> pageModels);
 
 	PageModelFactory processVhost(VirtualHost vhost) throws ComponentDoesNotExists;
 	

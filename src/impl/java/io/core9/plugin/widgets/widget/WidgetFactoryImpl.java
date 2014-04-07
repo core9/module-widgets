@@ -11,10 +11,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.dozer.DozerBeanMapper;
+
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
-
-import org.dozer.DozerBeanMapper;
 
 @PluginImplementation
 public final class WidgetFactoryImpl implements WidgetFactory {
@@ -55,7 +55,7 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 	
 
 	@Override
-	public WidgetFactory registerAll(VirtualHost vhost, List<Widget> widgets) {
+	public WidgetFactory registerAll(VirtualHost vhost, List<? extends Widget> widgets) {
 		if(!registry.containsKey(vhost)) {
 			registry.put(vhost, new HashMap<String,Widget>());
 		}
@@ -74,7 +74,7 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 	}
 	
 	@Override
-	public WidgetFactory registerOnAll(List<Widget> widgets) {
+	public WidgetFactory registerOnAll(List<? extends Widget> widgets) {
 		for(Widget widget : widgets) {
 			registerOnAll(widget);
 		}

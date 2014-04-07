@@ -1,8 +1,9 @@
 package io.core9.plugin.widgets.widget;
 
+import io.core9.plugin.database.repository.AbstractCrudEntity;
 import io.core9.plugin.widgets.datahandler.DataHandler;
 
-public class WidgetImpl implements Widget {
+public class WidgetImpl extends AbstractCrudEntity implements Widget {
 	
 	private String name;
 	private String templateName;

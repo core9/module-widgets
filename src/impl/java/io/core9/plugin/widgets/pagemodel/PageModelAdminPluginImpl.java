@@ -2,13 +2,16 @@ package io.core9.plugin.widgets.pagemodel;
 
 import io.core9.core.PluginRegistry;
 import io.core9.plugin.admin.AbstractAdminPlugin;
-import io.core9.plugin.admin.plugins.AdminConfigRepository;
+import io.core9.plugin.database.repository.CrudRepository;
+import io.core9.plugin.database.repository.NoCollectionNamePresentException;
+import io.core9.plugin.database.repository.RepositoryFactory;
 import io.core9.plugin.server.HostManager;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.exceptions.ComponentDoesNotExists;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,15 +25,15 @@ import org.apache.commons.lang3.ClassUtils;
 public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements PageModelAdminPlugin {
 	
 	private PluginRegistry registry;
-	
-	@InjectPlugin
-	private AdminConfigRepository config;
-	
+
 	@InjectPlugin
 	private PageModelFactory factory;
 	
 	@InjectPlugin
 	private HostManager hostManager;
+	
+	@InjectPlugin
+	private RepositoryFactory repository;
 	
 	@Override
 	public String getControllerName() {
@@ -95,10 +98,15 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 		return codeModels;
 	}
 	
-	private List<PageModel> getDataModels(VirtualHost vhost) {
-		List<PageModel> pageModels = new ArrayList<PageModel>();
-		for(Map<String,Object> pageModel : config.getConfigList(vhost, "pagemodel")) {
-			pageModels.add(factory.parse(pageModel));
+	private List<? extends PageModel> getDataModels(VirtualHost vhost) {
+		List<? extends PageModel> pageModels = new ArrayList<PageModel>();
+		try {
+			CrudRepository<PageModelImpl> crud = repository.getRepository(PageModelImpl.class);
+			Map<String,Object> query = new HashMap<String,Object>();
+			query.put("configtype", "pagemodel");
+			pageModels = crud.query(vhost, query);
+		} catch (NoCollectionNamePresentException e) {
+			e.printStackTrace();
 		}
 		return pageModels;
 	}

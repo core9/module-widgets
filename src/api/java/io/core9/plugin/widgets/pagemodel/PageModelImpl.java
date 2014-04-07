@@ -1,5 +1,7 @@
 package io.core9.plugin.widgets.pagemodel;
 
+import io.core9.plugin.database.repository.AbstractCrudEntity;
+import io.core9.plugin.database.repository.Collection;
 import io.core9.plugin.widgets.Component;
 
 import java.util.ArrayList;
@@ -7,14 +9,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class PageModelImpl implements PageModel {
+@Collection("configuration")
+public class PageModelImpl extends AbstractCrudEntity implements PageModel {
 
 	private String templateName;
 	private String name;
 	private String path;
 	private Set<String> roles;
-	private List<Component> components = new ArrayList<Component>();;
 	private Set<String> permissions;
+	private List<Component> components;
 	
 	@Override
 	public String getName() {
@@ -55,6 +58,9 @@ public class PageModelImpl implements PageModel {
 
 	@Override
 	public List<Component> getComponents() {
+		if(components == null) {
+			components = new ArrayList<Component>();
+		}
 		return this.components;
 	}
 

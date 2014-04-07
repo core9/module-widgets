@@ -29,7 +29,7 @@ public interface WidgetFactory extends Core9Plugin {
 	 * @param widgets
 	 * @return
 	 */
-	WidgetFactory registerAll(VirtualHost vhost, List<Widget> widgets);
+	WidgetFactory registerAll(VirtualHost vhost, List<? extends Widget> widgets);
 	
 	/**
 	 * Register a widget on all virtual hosts
@@ -43,7 +43,7 @@ public interface WidgetFactory extends Core9Plugin {
 	 * @param widgets
 	 * @return
 	 */
-	WidgetFactory registerOnAll(List<Widget> widgets);
+	WidgetFactory registerOnAll(List<? extends Widget> widgets);
 
 	/**
 	 * Process a virtual host
@@ -57,4 +57,5 @@ public interface WidgetFactory extends Core9Plugin {
 	 * @return
 	 */
 	Map<String,Widget> getRegistry(VirtualHost vhost);
+
 }

@@ -20,8 +20,6 @@ import java.util.Map;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
-import org.dozer.DozerBeanMapper;
-
 @PluginImplementation
 public class PageModelFactoryImpl implements PageModelFactory {
 	
@@ -41,12 +39,6 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	private ClosureTemplateEngine engine;
 
 	private Map<VirtualHost,Map<String, PageModel>> registry = new HashMap<VirtualHost,Map<String, PageModel>>();
-
-	@Override
-	public PageModel parse(Map<String, Object> config) {
-		final DozerBeanMapper mapper = new DozerBeanMapper();
-		return mapper.map(config, PageModelImpl.class);
-	}
 	
 	@Override
 	public PageModelFactory register(VirtualHost vhost, PageModel pageModel) {
@@ -58,7 +50,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	}
 
 	@Override
-	public PageModelFactory registerAll(VirtualHost vhost, List<PageModel> pageModels) {
+	public PageModelFactory registerAll(VirtualHost vhost, List<? extends PageModel> pageModels) {
 		if(!registry.containsKey(vhost)) {
 			registry.put(vhost, new HashMap<String,PageModel>());
 		}
@@ -77,7 +69,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	}
 
 	@Override
-	public PageModelFactory registerOnAll(List<PageModel> pageModels) {
+	public PageModelFactory registerOnAll(List<? extends PageModel> pageModels) {
 		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
 			registerAll(vhost,pageModels);
 		}

@@ -9,13 +9,6 @@ import java.util.Map;
 public interface WidgetFactory extends Core9Plugin {
 	
 	/**
-	 * Parse a widget from a configuration object
-	 * @param config
-	 * @return
-	 */
-	Widget parse(Map<String,Object> config);
-	
-	/**
 	 * Register a widget on a virtual host
 	 * @param vhost
 	 * @param widget

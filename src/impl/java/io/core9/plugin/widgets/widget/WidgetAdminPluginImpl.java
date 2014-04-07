@@ -2,10 +2,14 @@ package io.core9.plugin.widgets.widget;
 
 import io.core9.core.PluginRegistry;
 import io.core9.plugin.admin.AbstractAdminPlugin;
-import io.core9.plugin.admin.plugins.AdminConfigRepository;
+import io.core9.plugin.database.repository.CrudRepository;
+import io.core9.plugin.database.repository.NoCollectionNamePresentException;
+import io.core9.plugin.database.repository.RepositoryFactory;
 import io.core9.plugin.server.HostManager;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.request.Request;
+import io.core9.plugin.widgets.datahandler.DataHandlerFactory;
+import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryRegistry;
 import io.core9.plugin.widgets.datahandler.DataHandlerOptionsParser;
 
@@ -36,7 +40,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	private DataHandlerFactoryRegistry datahandlerFactories;
 	
 	@InjectPlugin
-	private AdminConfigRepository config;
+	private RepositoryFactory repository;
 	
 	@InjectPlugin
 	private DataHandlerOptionsParser parser;
@@ -130,6 +134,10 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 		this.registry = registry;
 	}
 	
+	/**
+	 * Retrieve the code widgets
+	 * @return
+	 */
 	private List<Widget> getCodeWidgets() {
 		List<Widget> codeWidgets = new ArrayList<Widget>();
 		for(Plugin plugin : this.registry.getPlugins()) {
@@ -143,22 +151,51 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 		}
 		return codeWidgets;
 	}
-	
-	private List<Widget> getDataWidgets(VirtualHost vhost) {
-		List<Widget> widgets = new ArrayList<Widget>();
-//		try {
-//			CrudRepository<WidgetImpl> crud = repository.getRepository(WidgetImpl.class);
-//			Map<String,Object> query = new HashMap<String,Object>();
-//			query.put("configtype", "widget");
-//			widgets = crud.query(vhost, query);
-//			
-//		} catch (NoCollectionNamePresentException e) {
-//			e.printStackTrace();
-//		}
-		for(Map<String,Object> widget : config.getConfigList(vhost, "widget")) {
-			widgets.add(factory.parse(widget));
+
+	/**
+	 * Retrieve the data widgets
+	 * @param vhost
+	 * @return
+	 */
+	private List<? extends Widget> getDataWidgets(VirtualHost vhost) {
+		List<? extends Widget> widgets = new ArrayList<Widget>();
+		try {
+			CrudRepository<WidgetImpl> crud = repository.getRepository(WidgetImpl.class);
+			Map<String,Object> query = new HashMap<String,Object>();
+			query.put("configtype", "widget");
+			widgets = crud.query(vhost, query);
+			ObjectMapper mapper = new ObjectMapper();
+			for(Widget widget : widgets) {
+				setupDataHandler(widget, mapper);
+			}
+		} catch (NoCollectionNamePresentException e) {
+			e.printStackTrace();
 		}
 		return widgets;
 	}
 
+	/**
+	 * Setup the datahandler
+	 * @param widget
+	 * @param mapper
+	 */
+	private void setupDataHandler(Widget widget, ObjectMapper mapper) {
+		DataHandlerFactory<? extends DataHandlerFactoryConfig> dataHandlerFactory = (DataHandlerFactory<? extends DataHandlerFactoryConfig>) datahandlerFactories.get(widget.getHandler());
+		DataHandlerFactoryConfig handlerconfig = null;
+		if(dataHandlerFactory != null && dataHandlerFactory.getConfigClass() != null) {
+			// Map the configuration data to the configuration class
+			if(widget.getHandlerOptions() == null) {
+				try {
+					handlerconfig = dataHandlerFactory.getConfigClass().newInstance();
+				} catch (InstantiationException e) {
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					e.printStackTrace();
+				}
+			} else {
+				handlerconfig = mapper.convertValue(widget.getHandlerOptions(), dataHandlerFactory.getConfigClass());
+			}
+			widget.setDataHandler(dataHandlerFactory.createDataHandler(handlerconfig));
+		}		
+	}
 }

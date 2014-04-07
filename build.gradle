@@ -30,7 +30,4 @@ dependencies {
 	implCompile 'io.core9:module-template-engine-closure-api:+'
 	implCompile 'io.core9:module-database-mongodb-api:+'
 	implCompile 'io.core9:module-authentication-api:+'
-	
-	//TODO remove
-	implCompile 'net.sf.dozer:dozer:+'
 }

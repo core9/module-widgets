@@ -1,7 +1,5 @@
 package io.core9.plugin.widgets.widget;
 
-import java.util.Map;
-
 import io.core9.plugin.widgets.datahandler.DataHandler;
 
 public interface Widget {
@@ -36,17 +34,5 @@ public interface Widget {
      * @return
      */
     String getTemplate();
-
-    /**
-     * Returns the name of the datahandler
-     * @return
-     */
-	String getHandler();
-	
-	/**
-	 * Return the handler options
-	 * @return
-	 */
-	Map<String,Object> getHandlerOptions();
     
 }

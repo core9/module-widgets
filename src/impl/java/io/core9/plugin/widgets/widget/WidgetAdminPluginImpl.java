@@ -158,14 +158,14 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	 * @return
 	 */
 	private List<? extends Widget> getDataWidgets(VirtualHost vhost) {
-		List<? extends Widget> widgets = new ArrayList<Widget>();
+		List<WidgetImpl> widgets = new ArrayList<WidgetImpl>();
 		try {
 			CrudRepository<WidgetImpl> crud = repository.getRepository(WidgetImpl.class);
 			Map<String,Object> query = new HashMap<String,Object>();
 			query.put("configtype", "widget");
 			widgets = crud.query(vhost, query);
 			ObjectMapper mapper = new ObjectMapper();
-			for(Widget widget : widgets) {
+			for(WidgetImpl widget : widgets) {
 				setupDataHandler(widget, mapper);
 			}
 		} catch (NoCollectionNamePresentException e) {
@@ -179,7 +179,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	 * @param widget
 	 * @param mapper
 	 */
-	private void setupDataHandler(Widget widget, ObjectMapper mapper) {
+	private void setupDataHandler(WidgetImpl widget, ObjectMapper mapper) {
 		DataHandlerFactory<? extends DataHandlerFactoryConfig> dataHandlerFactory = (DataHandlerFactory<? extends DataHandlerFactoryConfig>) datahandlerFactories.get(widget.getHandler());
 		DataHandlerFactoryConfig handlerconfig = null;
 		if(dataHandlerFactory != null && dataHandlerFactory.getConfigClass() != null) {

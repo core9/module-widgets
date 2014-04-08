@@ -61,7 +61,6 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 		this.handler = handler;
 	}
 
-	@Override
 	public String getHandler() {
 		return handler;
 	}
@@ -70,7 +69,6 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 		this.handlerOptions = handlerOptions;
 	}
 
-	@Override
 	public Map<String, Object> getHandlerOptions() {
 		return handlerOptions;
 	}

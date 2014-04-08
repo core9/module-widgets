@@ -17,13 +17,6 @@ public interface Widget {
 	String getTemplateName();
 	
 	/**
-	 * Set the data handler on the widget
-	 * @param dataHandler
-	 * @return
-	 */
-	Widget setDataHandler(DataHandler<?> dataHandler);
-	
-	/**
 	 * Returns the datahandler
 	 * @return
 	 */

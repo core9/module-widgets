@@ -36,7 +36,6 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 		return this.templateName;
 	}
 	
-	@Override
 	public Widget setDataHandler(DataHandler<?> dataHandler) {
 		this.dataHandler = dataHandler;
 		return this;

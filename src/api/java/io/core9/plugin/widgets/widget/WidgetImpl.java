@@ -71,5 +71,4 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 	public Map<String, Object> getHandleroptions() {
 		return handleroptions;
 	}
-
 }

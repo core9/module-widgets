@@ -14,7 +14,7 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 	private DataHandler<?> dataHandler;
 	private String template;
 	private String handler;
-	private Map<String,Object> handlerOptions;
+	private Map<String,Object> handleroptions;
 	
 	public Widget setName(String name) {
 		this.name = name;
@@ -64,12 +64,11 @@ public class WidgetImpl extends AbstractCrudEntity implements Widget {
 		return handler;
 	}
 	
-	public void setHandlerOptions(Map<String,Object> handlerOptions) {
-		this.handlerOptions = handlerOptions;
+	public void setHandleroptions(Map<String,Object> handleroptions) {
+		this.handleroptions = handleroptions;
 	}
 
-	public Map<String, Object> getHandlerOptions() {
-		return handlerOptions;
+	public Map<String, Object> getHandleroptions() {
+		return handleroptions;
 	}
-
 }

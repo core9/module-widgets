@@ -184,7 +184,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 		DataHandlerFactoryConfig handlerconfig = null;
 		if(dataHandlerFactory != null && dataHandlerFactory.getConfigClass() != null) {
 			// Map the configuration data to the configuration class
-			if(widget.getHandlerOptions() == null) {
+			if(widget.getHandleroptions() == null) {
 				try {
 					handlerconfig = dataHandlerFactory.getConfigClass().newInstance();
 				} catch (InstantiationException e) {
@@ -193,7 +193,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 					e.printStackTrace();
 				}
 			} else {
-				handlerconfig = mapper.convertValue(widget.getHandlerOptions(), dataHandlerFactory.getConfigClass());
+				handlerconfig = mapper.convertValue(widget.getHandleroptions(), dataHandlerFactory.getConfigClass());
 			}
 			widget.setDataHandler(dataHandlerFactory.createDataHandler(handlerconfig));
 		}		

@@ -37,6 +37,9 @@ public class BundleDataHandlerFactoryImpl implements BundleDataHandler<BundleDat
 			@Override
 			public Map<String, Object> handle(Request req) {
 				Map<String, Object> result = new HashMap<String, Object>();
+				if(options.getComponents() == null){
+					return result;
+				}
 				for(Component component : options.getComponents()) {
 					if(component.getGlobals().size() > 0) {
 						for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {

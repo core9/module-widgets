@@ -114,7 +114,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	 * @throws ComponentDoesNotExists
 	 */
 	private Middleware createMiddleware(final PageModel model, final Map<String,Widget> widgets) throws ComponentDoesNotExists {
-		if(model.getRoles().isEmpty() && model.getPermissions().isEmpty()) {
+		if((model.getRoles().isEmpty() && model.getPermissions().isEmpty()) || System.getProperty("DEBUG") != null) {
 			return new Middleware() {
 				@Override
 				public void handle(Request req) {

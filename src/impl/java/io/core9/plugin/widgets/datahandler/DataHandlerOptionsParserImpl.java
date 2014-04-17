@@ -3,6 +3,7 @@ package io.core9.plugin.widgets.datahandler;
 import io.core9.plugin.admin.plugins.AdminConfigRepository;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.widgets.Core9Configuration;
+import io.core9.plugin.widgets.Core9File;
 import io.core9.plugin.widgets.Core9GlobalConfiguration;
 
 import java.lang.reflect.Field;
@@ -74,6 +75,12 @@ public class DataHandlerOptionsParserImpl implements DataHandlerOptionsParser {
 				fieldJson.put("widget", "select_with_global");
 				fieldJson.put("label", field.getName() + " by Name");
 				fieldJson.put("values", values);
+				result.put(field.getName(), fieldJson);
+			}
+			if(field.isAnnotationPresent(Core9File.class)) {
+				JSONObject fieldJson = new JSONObject();
+				fieldJson.put("widget", "file");
+				fieldJson.put("filepath", "/");
 				result.put(field.getName(), fieldJson);
 			}
 		}

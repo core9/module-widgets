@@ -25,6 +25,7 @@ import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 import org.apache.commons.lang3.ClassUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.factories.SchemaFactoryWrapper;
@@ -32,6 +33,12 @@ import com.google.template.soy.base.SoySyntaxException;
 
 @PluginImplementation
 public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements WidgetAdminPlugin {
+	
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
+	static {
+		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	}
 	
 	@InjectPlugin
 	private WidgetFactory factory;
@@ -91,17 +98,16 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	@Override
 	protected void process(Request request, String type, String id) {
 		if(type.equals("datahandler")) {
-			ObjectMapper mapper = new ObjectMapper();
 	        SchemaFactoryWrapper visitor = new SchemaFactoryWrapper();
 	        Class<?> configClass = datahandlerFactories.get(id).getConfigClass();
 	        if(configClass == null) {
 	        	request.getResponse().end();
 	        } else {
 	        	try {
-	        		mapper.acceptJsonFormatVisitor(configClass, visitor);
+	        		MAPPER.acceptJsonFormatVisitor(configClass, visitor);
 	        		JsonSchema schema = visitor.finalSchema();
 	        		String result = "{";
-	        		result += "\"schema\": " + mapper.writeValueAsString(schema);
+	        		result += "\"schema\": " + MAPPER.writeValueAsString(schema);
 	        		result += ", \"options\": " + parser.parse(request.getVirtualHost(), configClass);
 	        		result += "}";
 	        		request.getResponse().end(result);
@@ -164,9 +170,8 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 			Map<String,Object> query = new HashMap<String,Object>();
 			query.put("configtype", "widget");
 			widgets = crud.query(vhost, query);
-			ObjectMapper mapper = new ObjectMapper();
 			for(WidgetImpl widget : widgets) {
-				setupDataHandler(widget, mapper);
+				setupDataHandler(widget);
 			}
 		} catch (NoCollectionNamePresentException e) {
 			e.printStackTrace();
@@ -179,7 +184,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	 * @param widget
 	 * @param mapper
 	 */
-	private void setupDataHandler(WidgetImpl widget, ObjectMapper mapper) {
+	private void setupDataHandler(WidgetImpl widget) {
 		DataHandlerFactory<? extends DataHandlerFactoryConfig> dataHandlerFactory = (DataHandlerFactory<? extends DataHandlerFactoryConfig>) datahandlerFactories.get(widget.getHandler());
 		DataHandlerFactoryConfig handlerconfig = null;
 		if(dataHandlerFactory != null && dataHandlerFactory.getConfigClass() != null) {
@@ -193,7 +198,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 					e.printStackTrace();
 				}
 			} else {
-				handlerconfig = mapper.convertValue(widget.getHandleroptions(), dataHandlerFactory.getConfigClass());
+				handlerconfig = MAPPER.convertValue(widget.getHandleroptions(), dataHandlerFactory.getConfigClass());
 			}
 			widget.setDataHandler(dataHandlerFactory.createDataHandler(handlerconfig));
 		}		

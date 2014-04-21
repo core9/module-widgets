@@ -44,7 +44,6 @@ public class DataHandlerOptionsParserImpl implements DataHandlerOptionsParser {
 					fieldJson.put("label", field.getName());
 					result.put(field.getName(), fieldJson);
 				}
-				System.out.println(field.getType());
 			}
 		}
 	}

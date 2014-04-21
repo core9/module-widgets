@@ -47,7 +47,6 @@ public class ReferenceDataHandlerImpl implements ReferenceDataHandler<ReferenceD
 						query);
 				
 				int size = contents.size();
-				System.out.println(req.getPath());
 				String pageStr = (String) req.getParams().get("page");
 				int page;
 				try {

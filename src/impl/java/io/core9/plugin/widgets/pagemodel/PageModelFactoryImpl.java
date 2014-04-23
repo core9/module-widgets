@@ -81,13 +81,13 @@ public class PageModelFactoryImpl implements PageModelFactory {
 		for(PageModel pageModel : registry.get(vhost).values()) {
 			try {
 				PageModelTemplate template = parseTemplate(pageModel, widgets.getRegistry(vhost));
-				engine.addString(template.getFilename(), template.toString());
+				engine.addString(vhost, template.getFilename(), template.toString());
 				server.use(vhost, pageModel.getPath(), createMiddleware(pageModel, widgets.getRegistry(vhost)));
 			} catch (ComponentDoesNotExists e) {
 				e.printStackTrace();
 			}
 		}
-		engine.createCache();
+		engine.createCache(vhost);
 		return this;
 	}
 	

@@ -74,6 +74,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 			break;
 		case POST:
 			try {
+				factory.clear(request.getVirtualHost());
 				factory
 					.registerAll(request.getVirtualHost(), getDataWidgets(request.getVirtualHost()))
 					.processVhost(request.getVirtualHost());

@@ -61,14 +61,19 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 	@Override
 	public WidgetFactory processVhost(VirtualHost vhost) {
 		for(Widget widget : registry.get(vhost).values()) {
-			engine.addString(widget.getTemplateName() + ".soy", widget.getTemplate());
+			engine.addString(vhost, widget.getTemplateName() + ".soy", widget.getTemplate());
 		}
-		engine.createCache();
+		engine.createCache(vhost);
 		return this;
 	}
 
 	@Override
 	public Map<String, Widget> getRegistry(VirtualHost vhost) {
 		return registry.get(vhost);
+	}
+
+	@Override
+	public void clear(VirtualHost vhost) {
+		registry.get(vhost).clear();
 	}
 }

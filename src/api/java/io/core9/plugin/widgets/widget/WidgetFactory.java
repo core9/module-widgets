@@ -51,4 +51,10 @@ public interface WidgetFactory extends Core9Plugin {
 	 */
 	Map<String,Widget> getRegistry(VirtualHost vhost);
 
+	/**
+	 * Clear the widgets on a vhost
+	 * @param virtualHost
+	 */
+	void clear(VirtualHost vhost);
+
 }

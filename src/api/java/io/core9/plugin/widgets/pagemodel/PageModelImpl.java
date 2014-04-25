@@ -7,7 +7,10 @@ import io.core9.plugin.widgets.Component;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.ImmutableMap;
 
 @Collection("configuration")
 public class PageModelImpl extends AbstractCrudEntity implements PageModel {
@@ -96,6 +99,11 @@ public class PageModelImpl extends AbstractCrudEntity implements PageModel {
 	public PageModel setPermissions(Set<String> permissions) {
 		this.permissions = permissions;
 		return this;
+	}
+	
+	@Override
+	public Map<String,Object> retrieveDefaultQuery() {
+		return ImmutableMap.of("configtype", (Object) "pagemodel");
 	}
 	
 }

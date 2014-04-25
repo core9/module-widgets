@@ -7,9 +7,10 @@ import java.util.List;
 
 public class PageModelTemplate {
 	
+	private String id;
 	private String templateName;
 	private List<Widget> widgets;
-
+	
 	public void setName(String name) {
 		this.templateName = name;
 	}
@@ -26,17 +27,18 @@ public class PageModelTemplate {
 			  + " */\n"
 			  + "{template ." + templateName + "}\n";
 		for(Widget widget : widgets) {
-			  body += "{call " + widget.getTemplateName() + " data=\"$data." + widget.getName() + "\"/}\n";
+			  body += "{call " + widget.getTemplateName() + " data=\"$data['" + widget.getId() + "']\"/}\n";
 		}
 		body += "{/template}\n";
 		return body;
 	}
 	
 	public String getFilename() {
-		return "io.core9.pagemodels." + this.templateName + ".soy";
+		return "io.core9.pagemodels." + this.id + ".soy";
 	}
 	
-	public PageModelTemplate() {
+	public PageModelTemplate(String id) {
+		this.id = id;
 		this.widgets = new ArrayList<Widget>();
 	}
 

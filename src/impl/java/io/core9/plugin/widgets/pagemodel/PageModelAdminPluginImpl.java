@@ -11,9 +11,7 @@ import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.exceptions.ComponentDoesNotExists;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -102,9 +100,7 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 		List<? extends PageModel> pageModels = new ArrayList<PageModel>();
 		try {
 			CrudRepository<PageModelImpl> crud = repository.getRepository(PageModelImpl.class);
-			Map<String,Object> query = new HashMap<String,Object>();
-			query.put("configtype", "pagemodel");
-			pageModels = crud.query(vhost, query);
+			pageModels = crud.getAll(vhost);
 		} catch (NoCollectionNamePresentException e) {
 			e.printStackTrace();
 		}

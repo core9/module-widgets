@@ -7,6 +7,8 @@ import java.util.Set;
 
 public interface PageModel {
 	
+	String getId();
+	
 	String getName();
 	PageModel setName(String name);
 	

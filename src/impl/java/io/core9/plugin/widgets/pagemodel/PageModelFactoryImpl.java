@@ -92,10 +92,10 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	}
 	
 	private static PageModelTemplate parseTemplate(PageModel model, Map<String,Widget> widgets) throws ComponentDoesNotExists {
-		PageModelTemplate template = new PageModelTemplate();
+		PageModelTemplate template = new PageModelTemplate(model.getId());
 		template.setName(model.getTemplateName());
 		for(Component component : model.getComponents()) {
-			Widget widget = widgets.get(component.getName());
+			Widget widget = widgets.get(component.getId());
 			if(widget == null) {
 				System.out.println("Component : " + component.getName() + " does not exist!");
 				throw new ComponentDoesNotExists();
@@ -165,7 +165,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	private static Map<String, Object> makeDataObject(Request req, PageModel model, Map<String,Widget> widgets) {
 		Map<String,Object> data = new HashMap<String,Object>();
 		for(Component component : model.getComponents()) {
-			Widget widget = widgets.get(component.getName());
+			Widget widget = widgets.get(component.getId());
 			if(component.getGlobals().size() > 0) {
 				for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
 					if(entry.getValue() != null && entry.getValue().startsWith(":")) {

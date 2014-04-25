@@ -50,7 +50,7 @@ public class BundleDataHandlerFactoryImpl implements BundleDataHandler<BundleDat
 							}
 						}
 					}
-					Widget widget = widgets.getRegistry(req.getVirtualHost()).get(component.getName());
+					Widget widget = widgets.getRegistry(req.getVirtualHost()).get(component.getId());
 					DataHandler<?> handler;
 					if((handler = widget.getDataHandler()) != null) {
 						handler.getOptions().setComponentId(component.getId());

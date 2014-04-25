@@ -68,7 +68,10 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 		case GET:
 			Map<String,Object> result = new HashMap<String,Object>();
 			for(Map.Entry<String,Widget> entry : factory.getRegistry(request.getVirtualHost()).entrySet()) {
-				result.put(entry.getKey(), entry.getValue().getDataHandler());
+				Map<String,Object> widget = new HashMap<String, Object>();
+				widget.put("name", entry.getValue().getName());
+				widget.put("datahandler", entry.getValue().getDataHandler());
+				result.put(entry.getKey(), widget);
 			}
 			request.getResponse().sendJsonMap(result);
 			break;

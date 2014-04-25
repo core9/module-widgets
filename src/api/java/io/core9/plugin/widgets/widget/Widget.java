@@ -5,6 +5,12 @@ import io.core9.plugin.widgets.datahandler.DataHandler;
 public interface Widget {
 	
 	/**
+	 * Return the widget id
+	 * @return
+	 */
+	String getId();
+	
+	/**
 	 * Returns the widget name
 	 * @return
 	 */

@@ -27,7 +27,7 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 		if(!registry.containsKey(vhost)) {
 			registry.put(vhost, new HashMap<String,Widget>());
 		}
-		registry.get(vhost).put(widget.getName(), widget);
+		registry.get(vhost).put(widget.getId(), widget);
 		return this;
 	}
 
@@ -37,7 +37,7 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 			registry.put(vhost, new HashMap<String,Widget>());
 		}
 		for(Widget widget : widgets) {
-			registry.get(vhost).put(widget.getName(), widget);
+			registry.get(vhost).put(widget.getId(), widget);
 		}
 		return this;
 	}

@@ -1,10 +1,10 @@
 package io.core9.plugin.widgets.widget;
 
-import java.util.Map;
-
 import io.core9.plugin.database.repository.AbstractCrudEntity;
 import io.core9.plugin.database.repository.Collection;
 import io.core9.plugin.widgets.datahandler.DataHandler;
+
+import java.util.Map;
 
 @Collection("configuration")
 public class WidgetImpl extends AbstractCrudEntity implements Widget {

@@ -1,14 +1,9 @@
 package io.core9.plugin.widgets.widget;
 
+import io.core9.plugin.database.repository.CrudEntity;
 import io.core9.plugin.widgets.datahandler.DataHandler;
 
-public interface Widget {
-	
-	/**
-	 * Return the widget id
-	 * @return
-	 */
-	String getId();
+public interface Widget extends CrudEntity {
 	
 	/**
 	 * Returns the widget name

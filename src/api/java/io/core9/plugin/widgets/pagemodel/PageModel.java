@@ -1,13 +1,12 @@
 package io.core9.plugin.widgets.pagemodel;
 
+import io.core9.plugin.database.repository.CrudEntity;
 import io.core9.plugin.widgets.Component;
 
 import java.util.List;
 import java.util.Set;
 
-public interface PageModel {
-	
-	String getId();
+public interface PageModel extends CrudEntity {
 	
 	String getName();
 	PageModel setName(String name);

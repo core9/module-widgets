@@ -180,7 +180,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 				if((handler = widget.getDataHandler()) == null) {
 					data.put(component.getId(), new HashMap<String,Object>());
 				} else {
-					handler.getOptions().setComponentId(component.getId());
+					handler.getOptions().setComponentName(component.getId());
 					data.put(component.getId(), handler.handle(req));
 				}
 			}

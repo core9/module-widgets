@@ -12,7 +12,7 @@ public class Component {
 	 * @return the id
 	 */
 	public String getId() {
-		return id == null ? name : id;
+		return id;
 	}
 
 	/**

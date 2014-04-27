@@ -44,19 +44,19 @@ public class BundleDataHandlerFactoryImpl implements BundleDataHandler<BundleDat
 					if(component.getGlobals().size() > 0) {
 						for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
 							if(entry.getValue().startsWith(":")) {
-								req.putContext(component.getId() + "." + entry.getKey(), req.getContext(entry.getValue().substring(1)));
+								req.putContext(component.getName() + "." + entry.getKey(), req.getContext(entry.getValue().substring(1)));
 							} else {
-								req.putContext(component.getId() + "." + entry.getKey(), entry.getValue());
+								req.putContext(component.getName() + "." + entry.getKey(), entry.getValue());
 							}
 						}
 					}
 					Widget widget = widgets.getRegistry(req.getVirtualHost()).get(component.getId());
 					DataHandler<?> handler;
 					if((handler = widget.getDataHandler()) != null) {
-						handler.getOptions().setComponentId(component.getId());
-						result.put(component.getId(), handler.handle(req));
+						handler.getOptions().setComponentName(component.getName());
+						result.put(component.getName(), handler.handle(req));
 					} else {
-						result.put(component.getId(), new HashMap<String,Object>());
+						result.put(component.getName(), new HashMap<String,Object>());
 					}
 				}
 				return result;

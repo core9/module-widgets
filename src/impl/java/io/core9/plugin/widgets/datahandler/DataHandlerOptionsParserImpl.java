@@ -5,6 +5,7 @@ import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.widgets.Core9Configuration;
 import io.core9.plugin.widgets.Core9File;
 import io.core9.plugin.widgets.Core9GlobalConfiguration;
+import io.core9.plugin.widgets.Core9HiddenField;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -80,6 +81,11 @@ public class DataHandlerOptionsParserImpl implements DataHandlerOptionsParser {
 				JSONObject fieldJson = new JSONObject();
 				fieldJson.put("widget", "file");
 				fieldJson.put("filepath", "/");
+				result.put(field.getName(), fieldJson);
+			}
+			if(field.isAnnotationPresent(Core9HiddenField.class)) {
+				JSONObject fieldJson = new JSONObject();
+				fieldJson.put("widget", "hidden");
 				result.put(field.getName(), fieldJson);
 			}
 		}

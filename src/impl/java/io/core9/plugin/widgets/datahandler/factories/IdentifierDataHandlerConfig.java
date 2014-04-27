@@ -17,7 +17,7 @@ public class IdentifierDataHandlerConfig extends DataHandlerDefaultConfig {
 	
 	public String getId(Request req) {
 		if(id.isGlobal()) {
-			return req.getContext(this.getComponentId() + ".id", id.getValue());
+			return req.getContext(this.getComponentName() + ".id", id.getValue());
 		}
 		return id.getValue();
 	}

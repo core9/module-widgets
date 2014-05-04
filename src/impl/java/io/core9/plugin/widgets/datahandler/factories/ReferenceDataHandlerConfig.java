@@ -5,7 +5,7 @@ public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	
 	private String referencingField;
 	private String referencedContentType;
-	private int resultsPerPage = 1;
+	private int resultsPerPage = 0;
 
 	/**
 	 * @return the referenceField

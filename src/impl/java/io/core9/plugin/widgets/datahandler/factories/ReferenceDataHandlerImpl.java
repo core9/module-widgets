@@ -63,27 +63,29 @@ public class ReferenceDataHandlerImpl implements ReferenceDataHandler<ReferenceD
 						(String) req.getVirtualHost().getContext("database"), 
 						req.getVirtualHost().getContext("prefix") + config.getReferencedContentType(), 
 						query);
-				
-				int size = contents.size();
-				String pageStr = (String) req.getParams().get("page");
-				int page;
-				try {
-					page = Integer.parseInt(pageStr);
-				} catch (NullPointerException | NumberFormatException e) {
-					page = 1;
-				}
-				
-				contents = contents.subList(config.retrievePageStartIndex(size, page), 
-										config.retrievePageEndIndex(size, page));
-				Map<String,Object> pager = new HashMap<String,Object>();
-					pager.put("total", config.retrieveNumberOfPages(size));
-					pager.put("page", page);
-				result.put("pager", pager);
 				result.put("content", content);
+				if(config.getResultsPerPage() > 0) {
+					int size = contents.size();
+					String pageStr = (String) req.getParams().get("page");
+					int page;
+					try {
+						page = Integer.parseInt(pageStr);
+					} catch (NullPointerException | NumberFormatException e) {
+						page = 1;
+					}
+					
+					contents = contents.subList(config.retrievePageStartIndex(size, page), 
+											config.retrievePageEndIndex(size, page));
+					Map<String,Object> pager = new HashMap<String,Object>();
+						pager.put("total", config.retrieveNumberOfPages(size));
+						pager.put("page", page);
+						result.put("pager", pager);
+						result.put("contents", contents);
+				}
 				result.put("contents", contents);
 				return result;
 			}
-
+				
 			@Override
 			public ReferenceDataHandlerConfig getOptions() {
 				return (ReferenceDataHandlerConfig) options;

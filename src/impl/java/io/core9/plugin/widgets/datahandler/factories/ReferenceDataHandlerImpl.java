@@ -5,6 +5,7 @@ import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.datahandler.DataHandler;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,32 +40,52 @@ public class ReferenceDataHandlerImpl implements ReferenceDataHandler<ReferenceD
 				
 				// Build the query
 				Map<String, Object> query = new HashMap<>();
-				query.put(config.getReferenceField() + ".value", config.getId(req));
-				
-				List<Map<String,Object>> contents = database.getMultipleResults(
+				if(config.getFieldName() == null || config.getFieldName().equals("")) {
+					query.put("_id", config.getId(req));
+				} else {
+					query.put(config.getFieldName(), config.getId(req));
+				}
+				Map<String,Object> content = database.getSingleResult(
 						(String) req.getVirtualHost().getContext("database"), 
 						req.getVirtualHost().getContext("prefix") + config.getContentType(), 
 						query);
-				
-				int size = contents.size();
-				String pageStr = (String) req.getParams().get("page");
-				int page;
-				try {
-					page = Integer.parseInt(pageStr);
-				} catch (NullPointerException | NumberFormatException e) {
-					page = 1;
+				query.clear();
+				@SuppressWarnings("unchecked")
+				List<Map<String,Object>> refs = (List<Map<String, Object>>) content.get(config.getReferencingField());
+				List<String> ids = new ArrayList<String>();
+				for(Map<String,Object> ref : refs) {
+					ids.add((String) ref.get("value"));
 				}
-				
-				contents = contents.subList(config.retrievePageStartIndex(size, page), 
-										config.retrievePageEndIndex(size, page));
-				Map<String,Object> pager = new HashMap<String,Object>();
-					pager.put("total", config.retrieveNumberOfPages(size));
-					pager.put("page", page);
-				result.put("pager", pager);
+				Map<String,Object> inner = new HashMap<String,Object>();
+				inner.put("$in", ids);
+				query.put("_id", inner);
+				List<Map<String,Object>> contents = database.getMultipleResults(
+						(String) req.getVirtualHost().getContext("database"), 
+						req.getVirtualHost().getContext("prefix") + config.getReferencedContentType(), 
+						query);
+				result.put("content", content);
+				if(config.getResultsPerPage() > 0) {
+					int size = contents.size();
+					String pageStr = (String) req.getParams().get("page");
+					int page;
+					try {
+						page = Integer.parseInt(pageStr);
+					} catch (NullPointerException | NumberFormatException e) {
+						page = 1;
+					}
+					
+					contents = contents.subList(config.retrievePageStartIndex(size, page), 
+											config.retrievePageEndIndex(size, page));
+					Map<String,Object> pager = new HashMap<String,Object>();
+						pager.put("total", config.retrieveNumberOfPages(size));
+						pager.put("page", page);
+						result.put("pager", pager);
+						result.put("contents", contents);
+				}
 				result.put("contents", contents);
 				return result;
 			}
-
+				
 			@Override
 			public ReferenceDataHandlerConfig getOptions() {
 				return (ReferenceDataHandlerConfig) options;

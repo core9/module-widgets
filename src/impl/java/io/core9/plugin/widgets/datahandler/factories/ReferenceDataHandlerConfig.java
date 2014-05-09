@@ -3,21 +3,22 @@ package io.core9.plugin.widgets.datahandler.factories;
 
 public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	
-	private String referenceField;
-	private int resultsPerPage = 1;
+	private String referencingField;
+	private String referencedContentType;
+	private int resultsPerPage = 0;
 
 	/**
 	 * @return the referenceField
 	 */
-	public String getReferenceField() {
-		return referenceField;
+	public String getReferencingField() {
+		return referencingField;
 	}
 
 	/**
 	 * @param referenceField the referenceField to set
 	 */
-	public void setReferenceField(String referenceField) {
-		this.referenceField = referenceField;
+	public void setReferencingField(String referencingField) {
+		this.referencingField = referencingField;
 	}
 	
 	/**
@@ -69,5 +70,13 @@ public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	        e.printStackTrace();
         }
 		return pages;
+	}
+
+	public String getReferencedContentType() {
+		return referencedContentType;
+	}
+
+	public void setReferencedContentType(String referencedContentType) {
+		this.referencedContentType = referencedContentType;
 	}
 }

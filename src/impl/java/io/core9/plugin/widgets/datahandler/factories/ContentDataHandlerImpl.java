@@ -29,7 +29,8 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 
 	@Override
 	public DataHandler<ContentDataHandlerConfig> createDataHandler(final DataHandlerFactoryConfig options) {
-		final String fieldname = ((ContentDataHandlerConfig) options).getFieldName();
+		final ContentDataHandlerConfig config = (ContentDataHandlerConfig) options;
+		final String fieldname = config.getFieldName();
 		return new DataHandler<ContentDataHandlerConfig>(){
 
 			@Override
@@ -37,15 +38,23 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 				Map<String,Object> result = new HashMap<String, Object>();
 				Map<String,Object> query = new HashMap<String, Object>();
 				if(fieldname != null && !fieldname.equals("")) {
-					query.put(fieldname, ((ContentDataHandlerConfig) options).getId(req));
+					query.put(fieldname, config.getId(req));
 				} else {
-					query.put("_id", ((ContentDataHandlerConfig) options).getId(req));
+					query.put("_id", config.getId(req));
 				}
-				result.put("content", database.getSingleResult(
+				if(config.isMultipleResults()) {
+					result.put("content", database.getMultipleResults(
+							(String) req.getVirtualHost().getContext("database"), 
+							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
+							query)
+						);
+				} else {
+					result.put("content", database.getSingleResult(
 						(String) req.getVirtualHost().getContext("database"), 
-						req.getVirtualHost().getContext("prefix") + ((ContentDataHandlerConfig) options).getContentType(), 
+						req.getVirtualHost().getContext("prefix") + config.getContentType(), 
 						query)
-				);
+					);
+				}
 				return result;
 			}
 

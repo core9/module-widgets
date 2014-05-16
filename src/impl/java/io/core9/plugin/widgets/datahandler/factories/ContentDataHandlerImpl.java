@@ -39,7 +39,7 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 				Map<String,Object> query = new HashMap<String, Object>();
 				if(fieldname != null && !fieldname.equals("")) {
 					query.put(fieldname, config.getId(req));
-				} else {
+				} else if (!config.isMultipleResults()){
 					query.put("_id", config.getId(req));
 				}
 				if(config.isMultipleResults()) {

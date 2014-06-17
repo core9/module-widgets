@@ -4,9 +4,12 @@ import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.datahandler.DataHandlerDefaultConfig;
 import io.core9.plugin.widgets.datahandler.DataHandlerGlobalString;
 
+import java.util.List;
+
 public class IdentifierDataHandlerConfig extends DataHandlerDefaultConfig {
 	
 	private DataHandlerGlobalString id;
+	private List<CustomVariable> customVariables;
 
 	/**
 	 * @return the productID
@@ -27,5 +30,13 @@ public class IdentifierDataHandlerConfig extends DataHandlerDefaultConfig {
 	 */
 	public void setId(DataHandlerGlobalString id) {
 		this.id = id;
+	}
+
+	public List<CustomVariable> getCustomVariables() {
+		return customVariables;
+	}
+
+	public void setCustomVariables(List<CustomVariable> customVariables) {
+		this.customVariables = customVariables;
 	}
 }

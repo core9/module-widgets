@@ -6,6 +6,7 @@ import io.core9.plugin.widgets.datahandler.DataHandler;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
@@ -37,23 +38,34 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 			public Map<String, Object> handle(Request req) {
 				Map<String,Object> result = new HashMap<String, Object>();
 				Map<String,Object> query = new HashMap<String, Object>();
+				Map<String,Object> firstResult = null;
 				if(fieldname != null && !fieldname.equals("")) {
 					query.put(fieldname, config.getId(req));
 				} else if (!config.isMultipleResults()){
 					query.put("_id", config.getId(req));
 				}
 				if(config.isMultipleResults()) {
-					result.put("content", database.getMultipleResults(
+					List<Map<String,Object>> list = database.getMultipleResults(
 							(String) req.getVirtualHost().getContext("database"), 
 							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
-							query)
-						);
+							query);
+					result.put("content", list);
+					firstResult = list.get(0);
 				} else {
-					result.put("content", database.getSingleResult(
-						(String) req.getVirtualHost().getContext("database"), 
-						req.getVirtualHost().getContext("prefix") + config.getContentType(), 
-						query)
-					);
+					firstResult = database.getSingleResult(
+							(String) req.getVirtualHost().getContext("database"), 
+							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
+							query);
+					result.put("content", firstResult);
+				}
+				if(config.getCustomVariables() != null) {
+					for(CustomVariable var : config.getCustomVariables()) {
+						if(var.isManual()) {
+							req.getResponse().addGlobal(var.getKey(), var.getValue());
+						} else {
+							req.getResponse().addGlobal(var.getKey(), firstResult.get(var.getValue()));
+						}
+					}
 				}
 				return result;
 			}

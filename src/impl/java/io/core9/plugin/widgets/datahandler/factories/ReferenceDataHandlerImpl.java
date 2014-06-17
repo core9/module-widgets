@@ -77,10 +77,18 @@ public class ReferenceDataHandlerImpl implements ReferenceDataHandler<ReferenceD
 					contents = contents.subList(config.retrievePageStartIndex(size, page), 
 											config.retrievePageEndIndex(size, page));
 					Map<String,Object> pager = new HashMap<String,Object>();
-						pager.put("total", config.retrieveNumberOfPages(size));
-						pager.put("page", page);
-						result.put("pager", pager);
-						result.put("contents", contents);
+					pager.put("total", config.retrieveNumberOfPages(size));
+					pager.put("page", page);
+					result.put("pager", pager);
+				}
+				if(config.getCustomVariables() != null) {
+					for(CustomVariable var : config.getCustomVariables()) {
+						if(var.isManual()) {
+							req.getResponse().addGlobal(var.getKey(), var.getValue());
+						} else {
+							req.getResponse().addGlobal(var.getKey(), content.get(var.getValue()));
+						}
+					}
 				}
 				result.put("contents", contents);
 				return result;

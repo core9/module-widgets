@@ -50,7 +50,9 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
 							query);
 					result.put("content", list);
-					firstResult = list.get(0);
+					if(list.size() > 0) {
+						firstResult = list.get(0);
+					}
 				} else {
 					firstResult = database.getSingleResult(
 							(String) req.getVirtualHost().getContext("database"), 
@@ -63,7 +65,9 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 						if(var.isManual()) {
 							req.getResponse().addGlobal(var.getKey(), var.getValue());
 						} else {
-							req.getResponse().addGlobal(var.getKey(), firstResult.get(var.getValue()));
+							if(firstResult != null) {
+								req.getResponse().addGlobal(var.getKey(), firstResult.get(var.getValue()));
+							}
 						}
 					}
 				}

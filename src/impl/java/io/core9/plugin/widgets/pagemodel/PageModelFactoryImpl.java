@@ -13,12 +13,17 @@ import io.core9.plugin.widgets.exceptions.ComponentDoesNotExists;
 import io.core9.plugin.widgets.widget.Widget;
 import io.core9.plugin.widgets.widget.WidgetFactory;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
+import rx.Observable;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 @PluginImplementation
 public class PageModelFactoryImpl implements PageModelFactory {
@@ -162,30 +167,42 @@ public class PageModelFactoryImpl implements PageModelFactory {
 		}
 	}
 	
-	private static Map<String, Object> makeDataObject(Request req, PageModel model, Map<String,Widget> widgets) {
-		Map<String,Object> data = new HashMap<String,Object>();
-		for(Component component : model.getComponents()) {
-			Widget widget = widgets.get(component.getId());
-			if(component.getGlobals().size() > 0) {
-				for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
-					if(entry.getValue() != null && entry.getValue().startsWith(":")) {
-						req.putContext(component.getId() + "." + entry.getKey(), req.getParams().get(entry.getValue().substring(1)));
-					} else {
-						req.putContext(component.getId() + "." + entry.getKey(), entry.getValue());
+	private static Map<String,Object> makeDataObject(final Request req, PageModel model, final Map<String,Widget> widgets) {
+		final Map<String,Object> result = new HashMap<String,Object>();
+		Observable.from(model.getComponents()).parallel(new Func1<Observable<Component>, Observable<Map.Entry<String,Object>>>() {
+			@Override
+			public Observable<Map.Entry<String,Object>> call(Observable<Component> obs) {
+				return obs.map(new Func1<Component, Map.Entry<String,Object>>() {
+					@Override
+					public Map.Entry<String,Object> call(Component component) {
+						Widget widget = widgets.get(component.getId());
+						if(component.getGlobals().size() > 0) {
+							for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
+								if(entry.getValue() != null && entry.getValue().startsWith(":")) {
+									req.putContext(component.getId() + "." + entry.getKey(), req.getParams().get(entry.getValue().substring(1)));
+								} else {
+									req.putContext(component.getId() + "." + entry.getKey(), entry.getValue());
+								}
+							}
+						}
+						if(widget != null && widget.getDataHandler() != null) {
+							DataHandler<?> handler = widget.getDataHandler();
+							handler.getOptions().setComponentName(component.getId());
+							return new AbstractMap.SimpleEntry<String,Object>(component.getId(), handler.handle(req));
+						} else {
+							return new AbstractMap.SimpleEntry<String,Object>(component.getId(), new HashMap<String,Object>());
+						}
 					}
-				}
+				});
 			}
-			if(widget != null) {
-				DataHandler<?> handler;
-				if((handler = widget.getDataHandler()) == null) {
-					data.put(component.getId(), new HashMap<String,Object>());
-				} else {
-					handler.getOptions().setComponentName(component.getId());
-					data.put(component.getId(), handler.handle(req));
-				}
+		}).toBlocking().forEach(new Action1<Map.Entry<String,Object>>(){
+
+			@Override
+			public void call(Entry<String, Object> t1) {
+				result.put(t1.getKey(), t1.getValue());
 			}
-		}
-		return data;
+		});
+		return result;
 	}
 
 	@Override

@@ -30,5 +30,4 @@ dependencies {
 	implCompile 'io.core9:module-template-engine-closure-api:+'
 	implCompile 'io.core9:module-database-mongodb-api:+'
 	implCompile 'io.core9:module-authentication-api:+'
-	implCompile 'com.netflix.rxjava:rxjava-core:+'
 }

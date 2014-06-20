@@ -4,9 +4,9 @@ import io.core9.plugin.server.HostManager;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.template.closure.ClosureTemplateEngine;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
@@ -20,12 +20,12 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 	@InjectPlugin
 	private HostManager hostManager;
 	
-	private Map<VirtualHost,Map<String, Widget>> registry = new ConcurrentHashMap<VirtualHost,Map<String, Widget>>();	
+	private Map<VirtualHost,Map<String, Widget>> registry = new HashMap<VirtualHost,Map<String, Widget>>();	
 	
 	@Override
 	public WidgetFactory register(VirtualHost vhost, Widget widget) {
 		if(!registry.containsKey(vhost)) {
-			registry.put(vhost, new ConcurrentHashMap<String,Widget>());
+			registry.put(vhost, new HashMap<String,Widget>());
 		}
 		registry.get(vhost).put(widget.getId(), widget);
 		return this;
@@ -34,7 +34,7 @@ public final class WidgetFactoryImpl implements WidgetFactory {
 	@Override
 	public WidgetFactory registerAll(VirtualHost vhost, List<? extends Widget> widgets) {
 		if(!registry.containsKey(vhost)) {
-			registry.put(vhost, new ConcurrentHashMap<String,Widget>());
+			registry.put(vhost, new HashMap<String,Widget>());
 		}
 		for(Widget widget : widgets) {
 			registry.get(vhost).put(widget.getId(), widget);

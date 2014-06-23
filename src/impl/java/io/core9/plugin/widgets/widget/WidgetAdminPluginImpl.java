@@ -73,7 +73,12 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 				widget.put("datahandler", entry.getValue().getDataHandler());
 				result.put(entry.getKey(), widget);
 			}
-			request.getResponse().sendJsonMap(result);
+			try {
+				request.getResponse().end(MAPPER.writeValueAsString(result));
+			} catch (JsonProcessingException e) {
+				request.getResponse().setStatusCode(500);
+				request.getResponse().end(e.getMessage());
+			}
 			break;
 		case POST:
 			try {

@@ -2,10 +2,10 @@ package io.core9.plugin.widgets.pagemodel;
 
 import io.core9.module.auth.AuthenticationPlugin;
 import io.core9.plugin.server.HostManager;
+import io.core9.plugin.server.Server;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.handler.Middleware;
 import io.core9.plugin.server.request.Request;
-import io.core9.plugin.server.vertx.VertxServer;
 import io.core9.plugin.template.closure.ClosureTemplateEngine;
 import io.core9.plugin.widgets.Component;
 import io.core9.plugin.widgets.datahandler.DataHandler;
@@ -33,7 +33,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	private HostManager hostManager;
 	
 	@InjectPlugin
-	private VertxServer server;
+	private Server server;
 	
 	@InjectPlugin
 	private ClosureTemplateEngine engine;

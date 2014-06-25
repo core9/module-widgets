@@ -22,7 +22,7 @@ task publishBintray (type: org._10ne.gradle.rest.RestTask, dependsOn: bintrayUpl
 dependencies {
 	apiCompile 'io.core9:core-api:+'
 	apiCompile 'io.core9:module-admin-api:+'
-	apiCompile 'io.core9:module-server-vertx-api:+'
+	apiCompile 'io.core9:module-server-api:+'
 	apiCompile 'io.core9:module-database-api:+'
 	
 	implCompile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:+'

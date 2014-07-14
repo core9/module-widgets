@@ -1,11 +1,17 @@
 package io.core9.plugin.widgets.datahandler.factories;
 
+import io.core9.plugin.widgets.datahandler.DataHandlerDefaultConfig;
+import io.core9.plugin.widgets.datahandler.Pager;
 
-public class ContentDataHandlerConfig extends IdentifierDataHandlerConfig {
+import java.util.List;
+
+
+public class ContentDataHandlerConfig extends DataHandlerDefaultConfig {
 	
 	private String contentType;
-	private String fieldName;
+	private List<CustomGlobal<Object>> fields;
 	private boolean multipleResults;
+	private Pager pager;
 
 	/**
 	 * @return the contentType
@@ -21,25 +27,27 @@ public class ContentDataHandlerConfig extends IdentifierDataHandlerConfig {
 		this.contentType = contentType;
 	}
 
-	/**
-	 * @return the fieldName
-	 */
-	public String getFieldName() {
-		return fieldName;
-	}
-
-	/**
-	 * @param fieldName the fieldName to set
-	 */
-	public void setFieldName(String fieldName) {
-		this.fieldName = fieldName;
-	}
-
 	public boolean isMultipleResults() {
 		return multipleResults;
 	}
 
 	public void setMultipleResults(boolean multipleResults) {
 		this.multipleResults = multipleResults;
+	}
+
+	public List<CustomGlobal<Object>> getFields() {
+		return fields;
+	}
+
+	public void setFields(List<CustomGlobal<Object>> fields) {
+		this.fields = fields;
+	}
+
+	public Pager getPager() {
+		return pager;
+	}
+
+	public void setPager(Pager pager) {
+		this.pager = pager;
 	}
 }

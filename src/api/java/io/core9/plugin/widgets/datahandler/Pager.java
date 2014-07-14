@@ -1,26 +1,9 @@
-package io.core9.plugin.widgets.datahandler.factories;
+package io.core9.plugin.widgets.datahandler;
 
+public class Pager {
 
-public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
-	
-	private String referencingField;
-	private String referencedContentType;
 	private int resultsPerPage = 0;
 
-	/**
-	 * @return the referenceField
-	 */
-	public String getReferencingField() {
-		return referencingField;
-	}
-
-	/**
-	 * @param referenceField the referenceField to set
-	 */
-	public void setReferencingField(String referencingField) {
-		this.referencingField = referencingField;
-	}
-	
 	/**
 	 * @return the resultsPerPage
 	 */
@@ -42,6 +25,9 @@ public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	 * @return
 	 */
 	public int retrievePageStartIndex(int size, int page) {
+		if(resultsPerPage == 0) {
+			return 0;
+		}
 		int result;
 		return (result = (page - 1) * resultsPerPage) < size ? result : size;
 	}
@@ -53,6 +39,9 @@ public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	 * @return
 	 */
 	public int retrievePageEndIndex(int size, int page) {
+		if(resultsPerPage == 0) {
+			return size;
+		}
 		int result;
 		return (result = page * resultsPerPage) < size ? result : size;
 	}
@@ -70,13 +59,5 @@ public class ReferenceDataHandlerConfig extends ContentDataHandlerConfig {
 	        e.printStackTrace();
         }
 		return pages;
-	}
-
-	public String getReferencedContentType() {
-		return referencedContentType;
-	}
-
-	public void setReferencedContentType(String referencedContentType) {
-		this.referencedContentType = referencedContentType;
 	}
 }

@@ -2,19 +2,16 @@ package io.core9.plugin.widgets.datahandler.factories;
 
 import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.datahandler.DataHandlerDefaultConfig;
-import io.core9.plugin.widgets.datahandler.DataHandlerGlobalString;
-
-import java.util.List;
+import io.core9.plugin.widgets.datahandler.DataHandlerGlobal;
 
 public class IdentifierDataHandlerConfig extends DataHandlerDefaultConfig {
 	
-	private DataHandlerGlobalString id;
-	private List<CustomVariable> customVariables;
+	private DataHandlerGlobal<String> id;
 
 	/**
 	 * @return the productID
 	 */
-	public DataHandlerGlobalString getId() {
+	public DataHandlerGlobal<String> getId() {
 		return id;
 	}
 	
@@ -28,15 +25,8 @@ public class IdentifierDataHandlerConfig extends DataHandlerDefaultConfig {
 	/**
 	 * @param id
 	 */
-	public void setId(DataHandlerGlobalString id) {
+	public void setId(DataHandlerGlobal<String> id) {
 		this.id = id;
 	}
 
-	public List<CustomVariable> getCustomVariables() {
-		return customVariables;
-	}
-
-	public void setCustomVariables(List<CustomVariable> customVariables) {
-		this.customVariables = customVariables;
-	}
 }

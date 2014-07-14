@@ -31,24 +31,35 @@ public class ContentDataHandlerImpl implements ContentDataHandler<ContentDataHan
 	@Override
 	public DataHandler<ContentDataHandlerConfig> createDataHandler(final DataHandlerFactoryConfig options) {
 		final ContentDataHandlerConfig config = (ContentDataHandlerConfig) options;
-		final String fieldname = config.getFieldName();
 		return new DataHandler<ContentDataHandlerConfig>(){
 
 			@Override
 			public Map<String, Object> handle(Request req) {
+				
 				Map<String,Object> result = new HashMap<String, Object>();
-				Map<String,Object> query = new HashMap<String, Object>();
+				Map<String,Object> query = CustomGlobal.convertToQuery(config.getFields(), req, options.getComponentName());
 				Map<String,Object> firstResult = null;
-				if(fieldname != null && !fieldname.equals("")) {
-					query.put(fieldname, config.getId(req));
-				} else if (!config.isMultipleResults()){
-					query.put("_id", config.getId(req));
-				}
 				if(config.isMultipleResults()) {
 					List<Map<String,Object>> list = database.getMultipleResults(
 							(String) req.getVirtualHost().getContext("database"), 
 							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
 							query);
+					if(config.getPager() != null) {
+						int size = list.size();
+						String pageStr = (String) req.getParams().get("page");
+						int page;
+						try {
+							page = Integer.parseInt(pageStr);
+						} catch (NullPointerException | NumberFormatException e) {
+							page = 1;
+						}
+						list = list.subList(config.getPager().retrievePageStartIndex(size, page), 
+												config.getPager().retrievePageEndIndex(size, page));
+						Map<String,Object> pager = new HashMap<String,Object>();
+						pager.put("total", config.getPager().retrieveNumberOfPages(size));
+						pager.put("page", page);
+						result.put("pager", pager);
+					}
 					result.put("content", list);
 					if(list.size() > 0) {
 						firstResult = list.get(0);

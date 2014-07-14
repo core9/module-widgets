@@ -39,7 +39,7 @@ public class DataHandlerOptionsParserImpl implements DataHandlerOptionsParser {
 		}
 		for(Field[] fields: fieldsList) {
 			for(Field field : fields) {
-				if(field.getType().equals(DataHandlerGlobalString.class)) {
+				if(field.getType().equals(DataHandlerGlobal.class)) {
 					JSONObject fieldJson = new JSONObject();
 					fieldJson.put("widget", "textfield_with_global");
 					fieldJson.put("label", field.getName());

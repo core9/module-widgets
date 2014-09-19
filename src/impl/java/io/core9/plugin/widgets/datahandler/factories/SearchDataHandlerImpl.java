@@ -35,11 +35,10 @@ public class SearchDataHandlerImpl implements SearchDataHandler<SearchDataHandle
 
 			@Override
 			public Map<String, Object> handle(Request req) {
-				
 				Map<String,Object> result = new HashMap<String, Object>();
+				Map<String,Object> query = CustomGlobal.convertToQuery(config.getFields(), req, options.getComponentName());
 				Map<String,Object> inner = new HashMap<String,Object>();
 				inner.put("$search", config.getQuery(req));
-				Map<String,Object> query = new HashMap<String, Object>();
 				query.put("$text", inner);
 				Map<String,Object> firstResult = null;
 				if(config.isMultipleResults()) {

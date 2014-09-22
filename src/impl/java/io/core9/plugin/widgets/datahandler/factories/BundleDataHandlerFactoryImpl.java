@@ -44,7 +44,7 @@ public class BundleDataHandlerFactoryImpl implements BundleDataHandler<BundleDat
 					if(component.getGlobals().size() > 0) {
 						for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
 							if(entry.getValue().startsWith(":")) {
-								req.putContext(component.getName() + "." + entry.getKey(), req.getContext(entry.getValue().substring(1)));
+								req.putContext(component.getName() + "." + entry.getKey(), req.getContext(options.getComponentName() + "." + entry.getValue().substring(1)));
 							} else {
 								req.putContext(component.getName() + "." + entry.getKey(), entry.getValue());
 							}

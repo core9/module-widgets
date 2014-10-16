@@ -2,8 +2,7 @@ package io.core9.plugin.widgets.datahandler.factories;
 
 import io.core9.core.plugin.Core9Plugin;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactory;
-import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
-public interface ContentDataHandler<T extends DataHandlerFactoryConfig> extends DataHandlerFactory<T>, Core9Plugin {
+public interface ContentDataHandler<T extends ContentDataHandlerConfig> extends DataHandlerFactory<T>, Core9Plugin {
 
 }

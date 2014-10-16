@@ -13,7 +13,7 @@ import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
 @PluginImplementation
-public class SearchDataHandlerImpl implements SearchDataHandler<SearchDataHandlerConfig> {
+public class SearchDataHandlerImpl<T extends SearchDataHandlerConfig> implements SearchDataHandler<T> {
 
 	@InjectPlugin
 	public MongoDatabase database;
@@ -29,9 +29,10 @@ public class SearchDataHandlerImpl implements SearchDataHandler<SearchDataHandle
 	}
 
 	@Override
-	public DataHandler<SearchDataHandlerConfig> createDataHandler(final DataHandlerFactoryConfig options) {
-		final SearchDataHandlerConfig config = (SearchDataHandlerConfig) options;
-		return new DataHandler<SearchDataHandlerConfig>(){
+	public DataHandler<T> createDataHandler(final DataHandlerFactoryConfig options) {
+		@SuppressWarnings("unchecked")
+		final T config = (T) options;
+		return new DataHandler<T>(){
 
 			@Override
 			public Map<String, Object> handle(Request req) {
@@ -88,8 +89,8 @@ public class SearchDataHandlerImpl implements SearchDataHandler<SearchDataHandle
 			}
 
 			@Override
-			public SearchDataHandlerConfig getOptions() {
-				return (SearchDataHandlerConfig) options;
+			public T getOptions() {
+				return config;
 			}
 		};
 	}

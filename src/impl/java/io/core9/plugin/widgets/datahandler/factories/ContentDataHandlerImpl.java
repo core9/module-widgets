@@ -1,10 +1,12 @@
 package io.core9.plugin.widgets.datahandler.factories;
 
 import io.core9.plugin.database.mongodb.MongoDatabase;
+import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.datahandler.DataHandler;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,16 @@ import java.util.Map;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+
+/**
+ * TODO: Cleanup (remove price field)
+ * @author mark
+ *
+ * @param <T>
+ */
 @PluginImplementation
 public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implements ContentDataHandler<T> {
 
@@ -41,12 +53,14 @@ public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implemen
 				Map<String,Object> query = CustomGlobal.convertToQuery(config.getFields(), req, options.getComponentName());
 				Map<String,Object> firstResult = null;
 				if(config.isMultipleResults()) {
-					List<Map<String,Object>> list = database.getMultipleResults(
-							(String) req.getVirtualHost().getContext("database"), 
-							req.getVirtualHost().getContext("prefix") + config.getContentType(), 
-							query);
+					VirtualHost vhost = req.getVirtualHost();
+					DBCollection coll = database.getCollection(vhost.getContext("database"), vhost.getContext("prefix") + config.getContentType());
+					DBCursor cursor = coll.find(new BasicDBObject(query));
+					if(req.getParams().get("price") != null) {
+						cursor.sort(new BasicDBObject("price", Integer.parseInt((String) req.getParams().get("price"))));
+					}
 					if(config.getPager() != null) {
-						int size = list.size();
+						int size = cursor.size();
 						String pageStr = (String) req.getParams().get("page");
 						int page;
 						try {
@@ -54,12 +68,16 @@ public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implemen
 						} catch (NullPointerException | NumberFormatException e) {
 							page = 1;
 						}
-						list = list.subList(config.getPager().retrievePageStartIndex(size, page), 
-												config.getPager().retrievePageEndIndex(size, page));
+						cursor.skip(config.getPager().retrievePageStartIndex(size, page));
+						cursor.limit(config.getPager().getResultsPerPage());
 						Map<String,Object> pager = new HashMap<String,Object>();
 						pager.put("total", config.getPager().retrieveNumberOfPages(size));
 						pager.put("page", page);
 						result.put("pager", pager);
+					}
+					List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+					while(cursor.hasNext()) {
+						list.add(cursor.next().toMap());
 					}
 					result.put("content", list);
 					if(list.size() > 0) {

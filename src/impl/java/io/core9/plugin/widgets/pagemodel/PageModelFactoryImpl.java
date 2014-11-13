@@ -163,6 +163,9 @@ public class PageModelFactoryImpl implements PageModelFactory {
 	}
 	
 	private static Map<String, Object> makeDataObject(Request req, PageModel model, Map<String,Widget> widgets) {
+		if(req.getCookie("CORE9SESSIONID") != null) {
+			req.getResponse().addGlobal("hasSession", true);
+		}
 		Map<String,Object> data = new HashMap<String,Object>();
 		for(Component component : model.getComponents()) {
 			Widget widget = widgets.get(component.getId());

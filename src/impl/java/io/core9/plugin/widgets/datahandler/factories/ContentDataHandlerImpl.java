@@ -46,6 +46,7 @@ public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implemen
 		final T config = (T) options;
 		return new DataHandler<T>(){
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public Map<String, Object> handle(Request req) {
 				

@@ -86,6 +86,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 				factory
 					.registerAll(request.getVirtualHost(), getDataWidgets(request.getVirtualHost()))
 					.processVhost(request.getVirtualHost());
+				request.getResponse().end("Success");
 			} catch (SoySyntaxException e) {
 				request.getResponse().setStatusCode(500);
 				request.getResponse().addValue("error", e.getMessage());

@@ -48,6 +48,7 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 			factory.registerAll(vhost, getDataModels(vhost));
 			try {
 				factory.processVhost(vhost);
+				request.getResponse().end("Success");
 			} catch (ComponentDoesNotExists e) {
 				request.getResponse().setStatusCode(500);
 				request.getResponse().addValue("error", e.getMessage());

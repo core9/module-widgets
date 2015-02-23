@@ -5,6 +5,7 @@ import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.datahandler.DataHandler;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,10 +55,10 @@ public class SearchDataHandlerImpl<T extends SearchDataHandlerConfig> implements
 							query);
 					if(config.getPager() != null) {
 						int size = list.size();
-						String pageStr = (String) req.getQueryParams().get("page").getFirst();
+						Deque<String> pageStr = req.getQueryParams().get("page");
 						int page;
 						try {
-							page = Integer.parseInt(pageStr);
+							page = Integer.parseInt(pageStr.getFirst());
 						} catch (NullPointerException | NumberFormatException e) {
 							page = 1;
 						}

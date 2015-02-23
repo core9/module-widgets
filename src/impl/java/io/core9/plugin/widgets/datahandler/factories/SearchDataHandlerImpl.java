@@ -40,6 +40,9 @@ public class SearchDataHandlerImpl<T extends SearchDataHandlerConfig> implements
 				Map<String,Object> query = CustomGlobal.convertToQuery(config.getFields(), req, options.getComponentName());
 				Map<String,Object> inner = new HashMap<String,Object>();
 				String strQuery = config.getQuery(req);
+				if(strQuery == null) {
+					strQuery = req.getQueryParams().get("q").getFirst();
+				}
 				inner.put("$search", strQuery);
 				result.put("query", strQuery);
 				query.put("$text", inner);

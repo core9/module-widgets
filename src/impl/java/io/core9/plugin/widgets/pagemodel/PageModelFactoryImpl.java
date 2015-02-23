@@ -172,7 +172,7 @@ public class PageModelFactoryImpl implements PageModelFactory {
 			if(component.getGlobals().size() > 0) {
 				for(Map.Entry<String,String> entry : component.getGlobals().entrySet()) {
 					if(entry.getValue() != null && entry.getValue().startsWith(":")) {
-						req.putContext(component.getId() + "." + entry.getKey(), req.getParams().get(entry.getValue().substring(1)));
+						req.putContext(component.getId() + "." + entry.getKey(), req.getPathParams().get(entry.getValue().substring(1)));
 					} else {
 						req.putContext(component.getId() + "." + entry.getKey(), entry.getValue());
 					}

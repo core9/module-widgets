@@ -51,7 +51,7 @@ public class SearchDataHandlerImpl<T extends SearchDataHandlerConfig> implements
 							query);
 					if(config.getPager() != null) {
 						int size = list.size();
-						String pageStr = (String) req.getParams().get("page");
+						String pageStr = (String) req.getQueryParams().get("page").getFirst();
 						int page;
 						try {
 							page = Integer.parseInt(pageStr);

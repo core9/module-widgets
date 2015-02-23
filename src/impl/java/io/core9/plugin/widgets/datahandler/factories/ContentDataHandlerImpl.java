@@ -57,12 +57,12 @@ public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implemen
 					VirtualHost vhost = req.getVirtualHost();
 					DBCollection coll = database.getCollection(vhost.getContext("database"), vhost.getContext("prefix") + config.getContentType());
 					DBCursor cursor = coll.find(new BasicDBObject(query));
-					if(req.getParams().get("price") != null) {
-						cursor.sort(new BasicDBObject("price", Integer.parseInt((String) req.getParams().get("price"))));
+					if(req.getPathParams().get("price") != null) {
+						cursor.sort(new BasicDBObject("price", Integer.parseInt((String) req.getPathParams().get("price"))));
 					}
 					if(config.getPager() != null) {
 						int size = cursor.size();
-						String pageStr = (String) req.getParams().get("page");
+						String pageStr = (String) req.getQueryParams().get("page").getFirst();
 						int page;
 						try {
 							page = Integer.parseInt(pageStr);

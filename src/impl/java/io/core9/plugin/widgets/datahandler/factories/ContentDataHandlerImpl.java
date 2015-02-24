@@ -7,6 +7,7 @@ import io.core9.plugin.widgets.datahandler.DataHandler;
 import io.core9.plugin.widgets.datahandler.DataHandlerFactoryConfig;
 
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -62,10 +63,10 @@ public class ContentDataHandlerImpl<T extends ContentDataHandlerConfig> implemen
 					}
 					if(config.getPager() != null) {
 						int size = cursor.size();
-						String pageStr = (String) req.getQueryParams().get("page").getFirst();
+						Deque<String> pageStr = req.getQueryParams().get("page");
 						int page;
 						try {
-							page = Integer.parseInt(pageStr);
+							page = Integer.parseInt(pageStr.getFirst());
 						} catch (NullPointerException | NumberFormatException e) {
 							page = 1;
 						}

@@ -102,25 +102,20 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 
 	@Override
 	public void addVirtualHost(VirtualHost vhost) {
+		widgetAdmin.addVirtualHost(vhost);
+		factory.registerAll(vhost, codeModels);
 		factory.registerAll(vhost, getDataModels(vhost));
+		try {
+			factory.processVhost(vhost);
+		} catch (ComponentDoesNotExists e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
 	public void removeVirtualHost(VirtualHost vhost) {
+		widgetAdmin.removeVirtualHost(vhost);
 		factory.clear(vhost);
-	}
-
-	@Override
-	public void execute() {
-		widgetAdmin.bootstrapWidgets();
-		factory.registerOnAll(codeModels);
-		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
-			try {
-				factory.processVhost(vhost);
-			} catch (ComponentDoesNotExists e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 }

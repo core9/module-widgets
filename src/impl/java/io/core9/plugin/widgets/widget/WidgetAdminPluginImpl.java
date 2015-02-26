@@ -20,6 +20,7 @@ import java.util.Map;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -36,6 +37,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	
 	private static final ObjectMapper MAPPER = new ObjectMapper();
 	private List<Widget> codeWidgets = new ArrayList<Widget>();
+	private CrudRepository<WidgetImpl> repository;
 	
 	static {
 		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -47,8 +49,10 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	@InjectPlugin
 	private DataHandlerFactoryRegistry datahandlerFactories;
 	
-	@InjectPlugin
-	private RepositoryFactory repository;
+	@PluginLoaded
+	public void onRepositoryFactory(RepositoryFactory factory) throws NoCollectionNamePresentException {
+		repository = factory.getRepository(WidgetImpl.class);
+	}
 	
 	@InjectPlugin
 	private DataHandlerOptionsParser parser;
@@ -84,9 +88,7 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 		case POST:
 			try {
 				factory.clear(request.getVirtualHost());
-				factory
-					.registerAll(request.getVirtualHost(), getDataWidgets(request.getVirtualHost()))
-					.processVhost(request.getVirtualHost());
+				addVirtualHost(request.getVirtualHost());
 				request.getResponse().end("Success");
 			} catch (SoySyntaxException e) {
 				request.getResponse().setStatusCode(500);
@@ -161,16 +163,11 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	 */
 	private List<? extends Widget> getDataWidgets(VirtualHost vhost) {
 		List<WidgetImpl> widgets = new ArrayList<WidgetImpl>();
-		try {
-			CrudRepository<WidgetImpl> crud = repository.getRepository(WidgetImpl.class);
-			Map<String,Object> query = new HashMap<String,Object>();
-			query.put("configtype", "widget");
-			widgets = crud.query(vhost, query);
-			for(WidgetImpl widget : widgets) {
-				setupDataHandler(widget);
-			}
-		} catch (NoCollectionNamePresentException e) {
-			e.printStackTrace();
+		Map<String,Object> query = new HashMap<String,Object>();
+		query.put("configtype", "widget");
+		widgets = repository.query(vhost, query);
+		for(WidgetImpl widget : widgets) {
+			setupDataHandler(widget);
 		}
 		return widgets;
 	}
@@ -202,21 +199,14 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 
 	@Override
 	public void addVirtualHost(VirtualHost vhost) {
+		factory.registerAll(vhost, codeWidgets);
 		factory.registerAll(vhost, getDataWidgets(vhost));
+		factory.processVhost(vhost);
 	}
 
 	@Override
 	public void removeVirtualHost(VirtualHost vhost) {
 		factory.clear(vhost);
 	}
-
-	@Override
-	public void bootstrapWidgets() {
-		factory.registerOnAll(codeWidgets);
-		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
-			factory.processVhost(vhost);
-		}
-	}
-
 	
 }

@@ -35,6 +35,7 @@ import com.google.template.soy.base.SoySyntaxException;
 public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements WidgetAdminPlugin {
 	
 	private static final ObjectMapper MAPPER = new ObjectMapper();
+	private List<Widget> codeWidgets = new ArrayList<Widget>();
 	
 	static {
 		MAPPER.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -137,25 +138,6 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 
 	@Override
 	public void processPlugins() {
-		factory.registerOnAll(getCodeWidgets());
-		for(VirtualHost vhost : hostManager.getVirtualHosts()) {
-			factory
-				.registerAll(vhost, getDataWidgets(vhost))
-				.processVhost(vhost);
-		}
-	}
-
-	@Override
-	public void setRegistry(PluginRegistry registry) {
-		this.registry = registry;
-	}
-	
-	/**
-	 * Retrieve the code widgets
-	 * @return
-	 */
-	private List<Widget> getCodeWidgets() {
-		List<Widget> codeWidgets = new ArrayList<Widget>();
 		for(Plugin plugin : this.registry.getPlugins()) {
 			List<Class<?>> interfaces = ClassUtils.getAllInterfaces(plugin.getClass());
 			if(interfaces.contains(Widget.class)) {
@@ -165,7 +147,11 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 				codeWidgets.addAll(((WidgetProvider) plugin).getWidgets());
 			}
 		}
-		return codeWidgets;
+	}
+
+	@Override
+	public void setRegistry(PluginRegistry registry) {
+		this.registry = registry;
 	}
 
 	/**
@@ -212,5 +198,23 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 			}
 			widget.setDataHandler(dataHandlerFactory.createDataHandler(handlerconfig));
 		}		
+	}
+
+	@Override
+	public void addVirtualHost(VirtualHost vhost) {
+		factory.registerAll(vhost, getDataWidgets(vhost));
+	}
+
+	@Override
+	public void removeVirtualHost(VirtualHost vhost) {
+		factory.clear(vhost);
+	}
+
+	@Override
+	public void execute() {
+		factory.registerOnAll(codeWidgets);
+		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
+			factory.processVhost(vhost);
+		}
 	}
 }

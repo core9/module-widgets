@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.xeoh.plugins.base.Plugin;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
+import net.xeoh.plugins.base.annotations.events.PluginLoaded;
 import net.xeoh.plugins.base.annotations.injections.InjectPlugin;
 
 import org.apache.commons.lang3.ClassUtils;
@@ -23,15 +24,20 @@ import org.apache.commons.lang3.ClassUtils;
 public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements PageModelAdminPlugin {
 	
 	private PluginRegistry registry;
+	private List<PageModel> codeModels = new ArrayList<PageModel>();
 
 	@InjectPlugin
 	private PageModelFactory factory;
 	
 	@InjectPlugin
 	private HostManager hostManager;
+
+	private CrudRepository<PageModelImpl> repository;
 	
-	@InjectPlugin
-	private RepositoryFactory repository;
+	@PluginLoaded
+	public void onRepositoryFactory(RepositoryFactory factory) throws NoCollectionNamePresentException {
+		this.repository = factory.getRepository(PageModelImpl.class);
+	}
 	
 	@Override
 	public String getControllerName() {
@@ -44,7 +50,7 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 		case POST:
 			VirtualHost vhost = request.getVirtualHost();
 			factory.clear(vhost);
-			factory.registerAll(vhost, getCodeModels());
+			factory.registerAll(vhost, codeModels);
 			factory.registerAll(vhost, getDataModels(vhost));
 			try {
 				factory.processVhost(vhost);
@@ -66,51 +72,50 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 	@Override
 	protected void process(Request request, String type, String id) {}
 
-	@Override
-	public Integer getPriority() {
-		return 2520;
+	private List<? extends PageModel> getDataModels(VirtualHost vhost) {
+		return repository.getAll(vhost);
 	}
 
 	@Override
 	public void processPlugins() {
-		// Process code models
-		factory.registerOnAll(getCodeModels());
-		for(VirtualHost vhost : hostManager.getVirtualHosts()) {
-			try {
-				factory
-					.registerAll(vhost, getDataModels(vhost))
-					.processVhost(vhost);
-			} catch (ComponentDoesNotExists e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
-	private List<PageModel> getCodeModels() {
-		List<PageModel> codeModels = new ArrayList<PageModel>();
 		for(Plugin plugin : this.registry.getPlugins()) {
 			List<Class<?>> interfaces = ClassUtils.getAllInterfaces(plugin.getClass());
 			if(interfaces.contains(PageModelProvider.class)) {
 				codeModels.addAll(((PageModelProvider) plugin).getPageModels());
 			}
 		}
-		return codeModels;
-	}
-	
-	private List<? extends PageModel> getDataModels(VirtualHost vhost) {
-		List<? extends PageModel> pageModels = new ArrayList<PageModel>();
-		try {
-			CrudRepository<PageModelImpl> crud = repository.getRepository(PageModelImpl.class);
-			pageModels = crud.getAll(vhost);
-		} catch (NoCollectionNamePresentException e) {
-			e.printStackTrace();
-		}
-		return pageModels;
 	}
 
 	@Override
 	public void setRegistry(PluginRegistry registry) {
 		this.registry = registry;
+	}
+
+	@Override
+	public Integer getPriority() {
+		return 2520;
+	}
+
+	@Override
+	public void addVirtualHost(VirtualHost vhost) {
+		factory.registerAll(vhost, getDataModels(vhost));
+	}
+
+	@Override
+	public void removeVirtualHost(VirtualHost vhost) {
+		factory.clear(vhost);
+	}
+
+	@Override
+	public void execute() {
+		factory.registerOnAll(codeModels);
+		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
+			try {
+				factory.processVhost(vhost);
+			} catch (ComponentDoesNotExists e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

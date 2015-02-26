@@ -211,10 +211,12 @@ public class WidgetAdminPluginImpl extends AbstractAdminPlugin implements Widget
 	}
 
 	@Override
-	public void execute() {
+	public void bootstrapWidgets() {
 		factory.registerOnAll(codeWidgets);
 		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
 			factory.processVhost(vhost);
 		}
 	}
+
+	
 }

@@ -9,6 +9,7 @@ import io.core9.plugin.server.HostManager;
 import io.core9.plugin.server.VirtualHost;
 import io.core9.plugin.server.request.Request;
 import io.core9.plugin.widgets.exceptions.ComponentDoesNotExists;
+import io.core9.plugin.widgets.widget.WidgetAdminPlugin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,9 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 	private HostManager hostManager;
 
 	private CrudRepository<PageModelImpl> repository;
+	
+	@InjectPlugin
+	private WidgetAdminPlugin widgetAdmin;
 	
 	@PluginLoaded
 	public void onRepositoryFactory(RepositoryFactory factory) throws NoCollectionNamePresentException {
@@ -108,6 +112,7 @@ public class PageModelAdminPluginImpl extends AbstractAdminPlugin implements Pag
 
 	@Override
 	public void execute() {
+		widgetAdmin.bootstrapWidgets();
 		factory.registerOnAll(codeModels);
 		for(VirtualHost vhost: hostManager.getVirtualHosts()) {
 			try {

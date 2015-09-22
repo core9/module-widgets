@@ -26,7 +26,7 @@ dependencies {
 	apiCompile 'io.core9:module-database-api:+'
 	
 	implCompile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:+'
-	implCompile 'net.minidev:json-smart:+'
+	implCompile 'net.minidev:json-smart:2.1.1'
 	implCompile 'io.core9:module-template-engine-closure-api:+'
 	implCompile 'io.core9:module-database-mongodb-api:+'
 	implCompile 'io.core9:module-authentication-api:+'
